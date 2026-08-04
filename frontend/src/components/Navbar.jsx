@@ -13,7 +13,7 @@ const navLinks = [
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const { showSearch, setShowSearch } = useShop();
+  const { getCartCount, showSearch, setShowSearch } = useShop();
   const navigate = useNavigate();
 
   const desktopLinkClass = ({ isActive }) =>
@@ -75,9 +75,11 @@ const Navbar = () => {
 
           <Link className="relative" to="/cart">
             <img alt="Cart" className="w-5 min-w-5" src={assets.cart_icon} />
-            <p className="absolute -right-1.5 -bottom-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[10px] text-white">
-              0
-            </p>
+            {getCartCount() > 0 && (
+              <p className="absolute -right-2 -bottom-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-center text-[10px] text-white leading-none">
+                {getCartCount()}
+              </p>
+            )}
           </Link>
 
           <button
