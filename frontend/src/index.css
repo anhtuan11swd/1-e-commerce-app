@@ -5,6 +5,15 @@
   font-family: "Prata", serif;
 }
 
+*::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .active hr {
   display: block;
 }
