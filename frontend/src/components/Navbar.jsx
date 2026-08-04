@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
+import useShop from "../context/useShop";
+import SearchBar from "./SearchBar";
 
 const navLinks = [
   { label: "TRANG CHỦ", to: "/" },
@@ -11,6 +13,8 @@ const navLinks = [
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
+  const { showSearch, setShowSearch } = useShop();
+  const navigate = useNavigate();
 
   const desktopLinkClass = ({ isActive }) =>
     isActive
@@ -39,6 +43,16 @@ const Navbar = () => {
           <img
             alt="Search"
             className="w-5 cursor-pointer"
+            onClick={() => {
+              setShowSearch(true);
+              navigate("/collection");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setShowSearch(true);
+                navigate("/collection");
+              }
+            }}
             src={assets.search_icon}
           />
 
@@ -76,6 +90,8 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+
+      {showSearch && <SearchBar />}
 
       {visible && (
         <button
