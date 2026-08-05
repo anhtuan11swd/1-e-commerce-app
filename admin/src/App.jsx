@@ -47,7 +47,7 @@ const App = () => {
               <Route element={<Add />} path="/add/:productId" />
               <Route element={<List />} path="/list" />
               <Route element={<Orders />} path="/orders" />
-              <Route element={<Navigate replace to="/add" />} path="*" />
+              <Route element={<Navigate replace to="/orders" />} path="*" />
             </Routes>
           </Suspense>
         </main>
