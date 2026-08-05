@@ -137,12 +137,33 @@ const updateProductSchema = z.object({
   subCategory: subCategorySchema.optional(),
 });
 
+const sizeEnum = z.enum(["XS", "S", "M", "L", "XL", "XXL"]);
+
+const addToCartSchema = z.object({
+  itemId: z.string().min(1, "Mã sản phẩm là bắt buộc"),
+  size: sizeEnum,
+});
+
+const updateCartSchema = z.object({
+  itemId: z.string().min(1, "Mã sản phẩm là bắt buộc"),
+  quantity: z
+    .number({ invalid_type_error: "Số lượng phải là một con số" })
+    .int("Số lượng phải là số nguyên")
+    .min(0, "Số lượng phải lớn hơn hoặc bằng 0"),
+  size: sizeEnum,
+});
+
+const getUserCartSchema = z.object({});
+
 export {
   addProductBodySchema,
+  addToCartSchema,
   adminLoginSchema,
+  getUserCartSchema,
   loginSchema,
   registerSchema,
   removeProductSchema,
   singleProductSchema,
+  updateCartSchema,
   updateProductSchema,
 };
