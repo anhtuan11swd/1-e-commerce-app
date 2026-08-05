@@ -8,7 +8,16 @@ import useShop from "../context/useShop";
 import { placeOrderSchema } from "../utils/validation";
 
 const PlaceOrder = () => {
-  const { user } = useShop();
+  const {
+    cartItems,
+    delivery_fee,
+    getCartAmount,
+    placeOrder,
+    placeOrderStripe,
+    products,
+    setCartItems,
+    user,
+  } = useShop();
   const [method, setMethod] = useState("cod");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
@@ -54,12 +63,69 @@ const PlaceOrder = () => {
     setLoading(true);
 
     try {
-      // TODO: call place order API
-      toast.success("Đặt hàng thành công", {
-        duration: 2000,
-        position: "top-center",
-      });
-      navigate("/orders");
+      const orderItems = [];
+      for (const itemId in cartItems) {
+        for (const size in cartItems[itemId]) {
+          if (cartItems[itemId][size] > 0) {
+            const itemInfo = products.find((p) => p._id === itemId);
+            if (itemInfo) {
+              orderItems.push({
+                image: itemInfo.image[0],
+                name: itemInfo.name,
+                price: itemInfo.price,
+                productId: itemId,
+                quantity: cartItems[itemId][size],
+                size,
+              });
+            }
+          }
+        }
+      }
+
+      const totalAmount = getCartAmount() + delivery_fee;
+
+      const orderData = {
+        address: {
+          city,
+          district,
+          email: user?.email || "",
+          name: user?.name || "",
+          phone,
+          state: city,
+          street: address,
+          zipcode: postalCode,
+        },
+        amount: totalAmount,
+        items: orderItems,
+        paymentMethod: method,
+      };
+
+      if (method === "cod") {
+        const result = await placeOrder(orderData);
+        if (result.success) {
+          setCartItems({});
+          toast.success("Đặt hàng thành công", {
+            duration: 2000,
+            position: "top-center",
+          });
+          navigate("/orders");
+        } else {
+          toast.error(result.message || "Lỗi đặt hàng", {
+            duration: 2000,
+            position: "top-center",
+          });
+        }
+      } else if (method === "stripe") {
+        const result = await placeOrderStripe(orderData);
+        if (result.success && result.session_url) {
+          window.location.replace(result.session_url);
+        } else {
+          toast.error(result.message || "Lỗi thanh toán Stripe", {
+            duration: 2000,
+            position: "top-center",
+          });
+        }
+      }
     } catch {
       toast.error("Lỗi kết nối server", {
         duration: 2000,
@@ -178,7 +244,7 @@ const PlaceOrder = () => {
                 setPostalCode(val);
                 setErrors((prev) => ({ ...prev, postalCode: undefined }));
               }}
-              placeholder="Mã bưu điện"
+              placeholder="Mã bưu điện (5-6 số)"
               type="text"
               value={postalCode}
             />
@@ -190,14 +256,13 @@ const PlaceOrder = () => {
             <input
               className={getInputClass("phone")}
               disabled={loading}
-              inputMode="numeric"
               maxLength={10}
               onChange={(e) => {
                 const val = e.target.value.replace(/\D/g, "").slice(0, 10);
                 setPhone(val);
                 setErrors((prev) => ({ ...prev, phone: undefined }));
               }}
-              placeholder="Số điện thoại"
+              placeholder="Số điện thoại (VD: 0912345678)"
               type="text"
               value={phone}
             />

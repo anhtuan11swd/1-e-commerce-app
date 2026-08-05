@@ -105,6 +105,45 @@ const ShopContextProvider = (props) => {
     });
   };
 
+  const placeOrder = async (orderData) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/v1/order/place`,
+        orderData,
+        { headers: { token } },
+      );
+      return data;
+    } catch {
+      return { message: "Lỗi kết nối server", success: false };
+    }
+  };
+
+  const placeOrderStripe = async (orderData) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/v1/order/stripe`,
+        orderData,
+        { headers: { token } },
+      );
+      return data;
+    } catch {
+      return { message: "Lỗi kết nối server", success: false };
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/v1/order/userorders`,
+        {},
+        { headers: { token } },
+      );
+      return data;
+    } catch {
+      return { message: "Lỗi kết nối server", success: false };
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
     const fetchProducts = async () => {
@@ -176,9 +215,12 @@ const ShopContextProvider = (props) => {
     cartItems,
     currency,
     delivery_fee,
+    fetchOrders,
     getCartAmount,
     getCartCount,
     logout,
+    placeOrder,
+    placeOrderStripe,
     products,
     search,
     setCartItems,

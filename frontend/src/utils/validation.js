@@ -61,6 +61,18 @@ const registerSchema = z.object({
   password: passwordSchema,
 });
 
+const phoneSchema = z
+  .string()
+  .trim()
+  .min(1, "Số điện thoại là bắt buộc")
+  .regex(/^0\d{9}$/, "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số");
+
+const zipcodeSchema = z
+  .string()
+  .trim()
+  .min(1, "Mã bưu điện là bắt buộc")
+  .regex(/^\d{5,6}$/, "Mã bưu điện phải là 5-6 chữ số");
+
 const placeOrderSchema = z.object({
   address: z
     .string()
@@ -79,16 +91,8 @@ const placeOrderSchema = z.object({
     .max(100, "Quận/Huyện phải có tối đa 100 ký tự"),
   email: emailSchema,
   name: nameSchema,
-  phone: z
-    .string()
-    .trim()
-    .min(1, "Số điện thoại là bắt buộc")
-    .regex(/^0\d{9}$/, "Số điện thoại phải có đúng 10 chữ số"),
-  postalCode: z
-    .string()
-    .trim()
-    .min(1, "Mã bưu điện là bắt buộc")
-    .regex(/^\d{5,6}$/, "Mã bưu điện phải là 5-6 chữ số"),
+  phone: phoneSchema,
+  postalCode: zipcodeSchema,
 });
 
 const newsletterSchema = z.object({

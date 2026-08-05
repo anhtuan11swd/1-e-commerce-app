@@ -12,6 +12,7 @@ const Cart = lazy(() => import("./pages/Cart"));
 const Login = lazy(() => import("./pages/Login"));
 const PlaceOrder = lazy(() => import("./pages/PlaceOrder"));
 const Orders = lazy(() => import("./pages/Orders"));
+const Verify = lazy(() => import("./pages/Verify"));
 
 const Loading = () => (
   <div className="flex h-screen items-center justify-center">
@@ -33,6 +34,7 @@ function App() {
         <Route element={<Login />} path="/login" />
         <Route element={<PlaceOrder />} path="/place-order" />
         <Route element={<Orders />} path="/orders" />
+        <Route element={<Verify />} path="/verify" />
       </Routes>
       <Footer />
     </Suspense>
