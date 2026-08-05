@@ -13,7 +13,7 @@ const navLinks = [
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const { getCartCount, showSearch, setShowSearch } = useShop();
+  const { getCartCount, logout, showSearch, setShowSearch, token } = useShop();
   const navigate = useNavigate();
 
   const desktopLinkClass = ({ isActive }) =>
@@ -22,7 +22,7 @@ const Navbar = () => {
       : "flex flex-col items-center gap-1";
 
   return (
-    <div className="relative">
+    <div className="relative z-30">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
         <Link to="/">
           <img alt="Forever logo" className="w-36" src={assets.logo} />
@@ -60,17 +60,33 @@ const Navbar = () => {
             <img
               alt="Profile"
               className="w-5 cursor-pointer"
+              onClick={() => {
+                if (!token) navigate("/login");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !token) navigate("/login");
+              }}
               src={assets.profile_icon}
             />
-            <div className="absolute right-0 z-10 hidden pt-4 group-hover:block">
-              <div className="flex w-32 flex-col gap-2 rounded bg-gray-100 px-5 py-3 text-gray-700 text-sm">
-                <p className="cursor-pointer hover:text-black">Hồ sơ của tôi</p>
-                <Link to="/orders">
-                  <p className="cursor-pointer hover:text-black">Đơn hàng</p>
-                </Link>
-                <p className="cursor-pointer hover:text-black">Đăng xuất</p>
+            {token && (
+              <div className="absolute right-0 z-10 hidden pt-4 group-hover:block">
+                <div className="flex w-32 flex-col gap-2 rounded bg-gray-100 px-5 py-3 text-gray-700 text-sm">
+                  <p className="cursor-pointer hover:text-black">
+                    Hồ sơ của tôi
+                  </p>
+                  <Link to="/orders">
+                    <p className="cursor-pointer hover:text-black">Đơn hàng</p>
+                  </Link>
+                  <button
+                    className="cursor-pointer bg-transparent text-left hover:text-black"
+                    onClick={logout}
+                    type="button"
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <Link className="relative" to="/cart">
@@ -143,7 +159,48 @@ const Navbar = () => {
                 {label}
               </NavLink>
             ))}
+            {token && (
+              <NavLink
+                className={({ isActive }) =>
+                  `border-l-2 py-2 pl-4 transition-colors ${
+                    isActive
+                      ? "border-black font-semibold"
+                      : "border-transparent"
+                  }`
+                }
+                onClick={() => setVisible(false)}
+                to="/orders"
+              >
+                ĐƠN HÀNG
+              </NavLink>
+            )}
           </nav>
+
+          <div className="mt-6 border-gray-200 border-t pt-4">
+            {token ? (
+              <button
+                className="w-full cursor-pointer rounded-md bg-black px-4 py-2 text-sm text-white transition-colors hover:bg-gray-800"
+                onClick={() => {
+                  logout();
+                  setVisible(false);
+                }}
+                type="button"
+              >
+                Đăng xuất
+              </button>
+            ) : (
+              <button
+                className="w-full cursor-pointer rounded-md bg-black px-4 py-2 text-sm text-white transition-colors hover:bg-gray-800"
+                onClick={() => {
+                  navigate("/login");
+                  setVisible(false);
+                }}
+                type="button"
+              >
+                Đăng nhập
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
