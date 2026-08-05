@@ -112,4 +112,19 @@ const adminLogin = async (req, res) => {
   }
 };
 
-export { adminLogin, loginUser, registerUser };
+const getProfile = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.body.userId).select("name email");
+    if (!user) {
+      return res.json({
+        message: "Người dùng không tồn tại",
+        success: false,
+      });
+    }
+    res.json({ success: true, user });
+  } catch {
+    res.json({ message: "Lỗi", success: false });
+  }
+};
+
+export { adminLogin, getProfile, loginUser, registerUser };

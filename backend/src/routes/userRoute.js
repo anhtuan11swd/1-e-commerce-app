@@ -2,9 +2,11 @@ import express from "express";
 
 import {
   adminLogin,
+  getProfile,
   loginUser,
   registerUser,
 } from "../controllers/userController.js";
+import authUser from "../middleware/auth.js";
 
 const userRouter = express.Router();
 
@@ -146,5 +148,55 @@ userRouter.post("/login", loginUser);
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 userRouter.post("/admin", adminLogin);
+
+/**
+ * @swagger
+ * /api/v1/user/profile:
+ *   post:
+ *     tags: [User]
+ *     summary: Lấy thông tin người dùng
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: Nguyen Van A
+ *                     email:
+ *                       type: string
+ *                       example: nguyenvana@gmail.com
+ *       401:
+ *         description: Token không hợp lệ hoặc hết hạn
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Người dùng không tồn tại
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Người dùng không tồn tại
+ */
+userRouter.post("/profile", authUser, getProfile);
 
 export default userRouter;
