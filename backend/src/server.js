@@ -5,6 +5,7 @@ import connectCloudinary from "./config/cloudinary.js";
 import connectDB from "./config/mongodb.js";
 import setupSwagger from "./config/swagger.js";
 import cartRouter from "./routes/cartRoute.js";
+import orderRouter from "./routes/orderRoute.js";
 import productRouter from "./routes/productRoute.js";
 import userRouter from "./routes/userRoute.js";
 
@@ -19,6 +20,7 @@ connectCloudinary();
 setupSwagger(app);
 
 app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRouter);
 

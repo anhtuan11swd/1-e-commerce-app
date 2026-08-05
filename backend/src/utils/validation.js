@@ -155,15 +155,86 @@ const updateCartSchema = z.object({
 
 const getUserCartSchema = z.object({});
 
+const phoneSchema = z
+  .string()
+  .trim()
+  .min(1, "Số điện thoại là bắt buộc")
+  .refine((val) => {
+    const normalized = val.replace(/^(\+84|84)/, "0").replace(/[\s.-]/g, "");
+    return /^0\d{9}$/.test(normalized);
+  }, "Số điện thoại phải có đúng 10 chữ số (VD: 0912345678)")
+  .refine((val) => {
+    const normalized = val.replace(/^(\+84|84)/, "0").replace(/[\s.-]/g, "");
+    return /^0(3[2-9]|5[689]|7[06789]|8[1-9]|9[0-9])\d{7}$/.test(normalized);
+  }, "Số điện thoại phải là số di động Việt Nam hợp lệ (03x, 05x, 07x, 08x, 09x)");
+
+const zipcodeSchema = z
+  .string()
+  .trim()
+  .min(1, "Mã bưu điện là bắt buộc")
+  .regex(/^\d{5,6}$/, "Mã bưu điện phải là 5-6 chữ số");
+
+const orderItemSchema = z.object({
+  image: z.string().min(1, "Ảnh sản phẩm là bắt buộc"),
+  name: z.string().min(1, "Tên sản phẩm là bắt buộc"),
+  price: z.number().min(1, "Giá phải lớn hơn 0"),
+  productId: z.string().min(1, "Mã sản phẩm là bắt buộc"),
+  quantity: z.number().int().min(1, "Số lượng phải lớn hơn 0"),
+  size: sizeEnum,
+});
+
+const addressSchema = z.object({
+  city: z.string().min(1, "Thành phố là bắt buộc"),
+  district: z.string().min(1, "Quận/Huyện là bắt buộc"),
+  email: z.string().email("Email không hợp lệ"),
+  name: z.string().min(1, "Họ tên là bắt buộc"),
+  phone: phoneSchema,
+  state: z.string().min(1, "Tỉnh/Thành phố là bắt buộc"),
+  street: z.string().min(1, "Địa chỉ đường là bắt buộc"),
+  zipcode: zipcodeSchema,
+});
+
+const placeOrderSchema = z.object({
+  address: addressSchema,
+  amount: z.number().min(1, "Tổng tiền phải lớn hơn 0"),
+  items: z.array(orderItemSchema).min(1, "Cần ít nhất một sản phẩm"),
+  paymentMethod: z.enum(["cod", "stripe"], {
+    errorMap: () => ({
+      message: "Phương thức thanh toán phải là cod hoặc stripe",
+    }),
+  }),
+});
+
+const userOrdersSchema = z.object({});
+
+const updateStatusSchema = z.object({
+  orderId: z.string().min(1, "Mã đơn hàng là bắt buộc"),
+  status: z.enum(
+    ["Order Placed", "Packing", "Shipped", "Out for delivery", "Delivered"],
+    {
+      errorMap: () => ({ message: "Trạng thái không hợp lệ" }),
+    },
+  ),
+});
+
+const verifyStripeSchema = z.object({
+  orderId: z.string().min(1, "Mã đơn hàng là bắt buộc"),
+  success: z.enum(["true", "false"]),
+});
+
 export {
   addProductBodySchema,
   addToCartSchema,
   adminLoginSchema,
   getUserCartSchema,
   loginSchema,
+  placeOrderSchema,
   registerSchema,
   removeProductSchema,
   singleProductSchema,
   updateCartSchema,
   updateProductSchema,
+  updateStatusSchema,
+  userOrdersSchema,
+  verifyStripeSchema,
 };
