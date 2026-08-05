@@ -38,7 +38,8 @@
     "lint:fix": "eslint . --fix",
     "predev": "npx kill-port 4000",
     "seed": "node src/seed.js",
-    "server": "nodemon src/server.js"
+    "server": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "type": "module",
   "version": "1.0.0"
