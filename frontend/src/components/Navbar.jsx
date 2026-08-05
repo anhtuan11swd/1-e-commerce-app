@@ -22,7 +22,7 @@ const Navbar = () => {
       : "flex flex-col items-center gap-1";
 
   return (
-    <div className="relative z-30">
+    <div className="sticky top-0 z-30 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
         <Link to="/">
           <img alt="Forever logo" className="w-36" src={assets.logo} />
