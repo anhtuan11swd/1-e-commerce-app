@@ -45,6 +45,11 @@ const Collection = () => {
     );
   };
 
+  const clearFilters = () => {
+    setCategory([]);
+    setSubCategory([]);
+  };
+
   const filterProducts = useMemo(() => {
     let productsCopy = products.slice();
 
@@ -146,6 +151,17 @@ const Collection = () => {
               </label>
             ))}
           </div>
+
+          {/* Clear Filters Button */}
+          {(category.length > 0 || subCategory.length > 0) && (
+            <button
+              className={`mt-2 w-full cursor-pointer bg-black px-6 py-2 text-sm text-white active:bg-gray-700 ${showFilter ? "block" : "hidden"} sm:block`}
+              onClick={clearFilters}
+              type="button"
+            >
+              Xóa bộ lọc
+            </button>
+          )}
         </div>
 
         {/* Product Section */}
